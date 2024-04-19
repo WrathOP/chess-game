@@ -2,6 +2,7 @@
 node_modules/
 npm-debug.log
 yarn-error.log
+package-lock.json
 
 # React
 build/
@@ -22,16 +23,10 @@ Thumbs.db
 logs/
 *.log
 
-# Dependency directories
-/.pnp/
-.pnp.js
 
 # Testing
 /coverage/
 
-# Build system
-/.nuxt/
-/nuxt.config.js
 
 # Misc
 .env.local
@@ -39,11 +34,4 @@ logs/
 .env.test.local
 .env.production.local
 
-# Next.js
-.next/
-out/
-
-# Yarn
-yarn.lock
-.pnp.*
 

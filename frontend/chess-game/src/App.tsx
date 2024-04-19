@@ -1,11 +1,17 @@
 import './App.css';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { Game } from './screens/game';
+import { Landing } from './screens/landing';
 
 function App() {
   return (
     <>
-      <div>
-        <h1 className='text-3xl font-bold underline'>Chess world!</h1>
-      </div>
+      <BrowserRouter>
+        <Routes>
+          <Route path='/' element={<Landing />} />
+          <Route path='/game' element={<Game />} />
+        </Routes>
+      </BrowserRouter>
     </>
   );
 }
