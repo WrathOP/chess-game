@@ -4,7 +4,7 @@ import { Player } from "./game-logic/player";
 
 const wss = new WebSocketServer({ port: 8080 });
 
-console.log("Server started on port 8080");
+console.log("Websocket available at port 8080");
 
 const gameManger = new GameManager();
 
