@@ -1,35 +1,44 @@
-import { WebSocketServer } from "ws";
-import { GameManager } from "./game-logic/game-manager";
-import { Player } from "./game-logic/player";
+import express from "express";
+import routes from "./routers/routes";
+import cors from "cors";
+import { initPassport } from "./passport";
+import auth from "./routers/auth";
+import dotenv from "dotenv";
+import session from "express-session";
+import passport from "passport";
+import { websocketRoute } from "./websockets";
 
-const wss = new WebSocketServer({ port: 8080 });
+const app = express();
 
-console.log("Websocket available at port 8080");
+dotenv.config();
 
-const gameManger = new GameManager();
+app.use(
+    session({
+        secret: "keyboard warriors in shambles",
+        resave: false,
+        saveUninitialized: false,
+        cookie: { secure: false, maxAge: 360000 },
+    })
+);
 
-wss.on("connection", function connection(ws) {
-    // Create a new player
-    const newPlayer = new Player(ws);
+initPassport();
 
-    // Add the player to the game manager
-    gameManger.addUser(newPlayer);
+app.use(passport.initialize());
+app.use(passport.authenticate("session"));
 
-    console.log(
-        "New connection",
-        gameManger.getNumberOfUsers(),
-        "users connected"
-    );
+app.use(
+    cors({
+        origin: "http://localhost:5173",
+        methods: "GET,POST,PUT,DELETE,PATCH,OPTIONS",
+        credentials: true,
+    })
+);
 
-    // Removing the player from the game manager
-    ws.on("close", function connection(ws) {
+app.use("/auth", auth);
+app.use("/v1", routes);
+app.use("/", websocketRoute);
 
-        gameManger.removeUser(newPlayer);
-
-        console.log(
-            "User disconnected",
-            gameManger.getNumberOfUsers(),
-            "users connected"
-        );
-    });
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
