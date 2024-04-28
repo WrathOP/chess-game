@@ -29,6 +29,7 @@ auth.get("/refresh", async (req, res) => {
             name: userDb?.name,
         });
     } else {
+        console.log("Unauthorized User")
         res.status(401).json({ success: false, message: "Unauthorized" });
     }
 });
