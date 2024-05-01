@@ -1,7 +1,15 @@
 import Github from '../assets/github.png';
 import { useNavigate } from 'react-router-dom';
 
-const BACKEND_URL = 'http://localhost:3000';
+let BACKEND_URL: string;
+
+switch (window.location.hostname) {
+    case 'localhost':
+        BACKEND_URL = 'http://localhost:3000';
+        break;
+    default:
+        BACKEND_URL = 'http://ec2-16-171-98-154.eu-north-1.compute.amazonaws.com';
+}
 
 const Login = () => {
     const navigate = useNavigate();
