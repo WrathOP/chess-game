@@ -1,7 +1,7 @@
 
 import { atom, selector } from "recoil";
+import axiosInstance from "../services/axiosInstance";
 
-export const BACKEND_URL = "http://localhost:3000";
 export interface User {
     token: string;
     id: string;
@@ -14,16 +14,14 @@ export const userAtom = atom<User>({
         key: "user/default",
         get: async () => {
             try {
-                const response = await fetch(`${BACKEND_URL}/auth/refresh`, {
-                    method: "GET",
+                const response = await axiosInstance.get("/auth/refresh", {
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    credentials: "include",
                 });
     
-                if (response.ok) {
-                    const data = await response.json();
+                if (response.status === 200) {
+                    const data = await response.data;
                     return data;
                 }
             } catch(e) {

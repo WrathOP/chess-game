@@ -7,9 +7,8 @@ import dotenv from "dotenv";
 import session from "express-session";
 import passport from "passport";
 import { websocketRoute } from "./websockets";
+
 const logger = require('morgan');
-
-
 const app = express();
 dotenv.config();
 
@@ -33,7 +32,6 @@ app.use(
     cors({
         origin: [
             "http://localhost:5173",
-            "https://chess-game-qk6ppa1ml-wrathops-projects.vercel.app",
             "https://chess-game-omega-topaz.vercel.app",
         ],
         methods: "GET,POST,PUT,DELETE,PATCH,OPTIONS",
