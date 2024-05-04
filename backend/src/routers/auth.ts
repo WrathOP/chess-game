@@ -6,7 +6,18 @@ import { db } from "../db";
 
 const auth = Router();
 
-const CLIENT_URL = "http://localhost:5173/game/random";
+let CLIENT_URL;
+
+if (process.env.NODE_ENV === "production") {
+    console.log("Using .env file for production")
+    CLIENT_URL = "https://chess-game-omega-topaz.vercel.app/game/random";
+} else if (process.env.NODE_ENV === "developement") {
+    CLIENT_URL = "http://localhost:5173/game/random";
+} else {
+    console.log("Using .env file for testing");
+    CLIENT_URL = "http://localhost:5173/game/random";
+}
+
 const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key";
 
 auth.get("/refresh", async (req, res) => {
@@ -29,7 +40,7 @@ auth.get("/refresh", async (req, res) => {
             name: userDb?.name,
         });
     } else {
-        console.log("Unauthorized User")
+        console.log("Unauthorized User");
         res.status(401).json({ success: false, message: "Unauthorized" });
     }
 });

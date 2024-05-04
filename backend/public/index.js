@@ -28,7 +28,6 @@ app.use(passport_2.default.authenticate("session"));
 app.use((0, cors_1.default)({
     origin: [
         "http://localhost:5173",
-        "https://chess-game-qk6ppa1ml-wrathops-projects.vercel.app",
         "https://chess-game-omega-topaz.vercel.app",
     ],
     methods: "GET,POST,PUT,DELETE,PATCH,OPTIONS",
@@ -37,7 +36,7 @@ app.use((0, cors_1.default)({
 app.use("/auth", auth_1.default);
 app.use("/v1", routes_1.default);
 app.use("/", websockets_1.websocketRoute);
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

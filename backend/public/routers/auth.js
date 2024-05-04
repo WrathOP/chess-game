@@ -17,7 +17,18 @@ const passport_1 = __importDefault(require("passport"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const db_1 = require("../db");
 const auth = (0, express_1.Router)();
-const CLIENT_URL = "http://localhost:5173/game/random";
+let CLIENT_URL;
+if (process.env.NODE_ENV === "production") {
+    console.log("Using .env file for production");
+    CLIENT_URL = "https://chess-game-omega-topaz.vercel.app/game/random";
+}
+else if (process.env.NODE_ENV === "developement") {
+    CLIENT_URL = "http://localhost:5173/game/random";
+}
+else {
+    console.log("Using .env file for testing");
+    CLIENT_URL = "http://localhost:5173/game/random";
+}
 const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key";
 auth.get("/refresh", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (req.user) {
