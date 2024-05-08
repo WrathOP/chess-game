@@ -2,9 +2,12 @@ import { WebSocketServer } from "ws";
 import { GameManager } from "./game-logic/game-manager";
 import { Player } from "./game-logic/player";
 import { Router } from "express";
+import { isAuthenticated } from "./constants/middlewares/isAuthenticated";
 
 const websocketRoute = Router();
 const wss = new WebSocketServer({ port: 8080 });
+
+websocketRoute.use(isAuthenticated);
 
 console.log("Websocket available at port 8080");
 

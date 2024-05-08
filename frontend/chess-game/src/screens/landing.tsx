@@ -18,7 +18,7 @@ export const Landing = () => {
                     <div className='grid content-center p-4 lg:p-0 lg:pt-16'>
                         <div className='flex justify-center'>
                             <h1 className='text-center text-3xl font-bold text-white xl:text-5xl'>
-                                Play chess online on the #2 Site!
+                                Welcome to chess for nerds ; CHESS NERDS !
                             </h1>
                         </div>
 

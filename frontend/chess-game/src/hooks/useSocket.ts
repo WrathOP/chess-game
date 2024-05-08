@@ -5,13 +5,13 @@ let WS_URL;
 
 switch (true) {
     case window.location.hostname.includes('localhost'):
-        WS_URL = 'http://localhost:8080';
+        WS_URL = 'ws://localhost:8080';
         break;
     case window.location.hostname.includes('vercel.app'):
-        WS_URL = 'http://ec2-16-171-98-154.eu-north-1.compute.amazonaws.com/ws';
+        WS_URL = 'ws://ec2-16-171-98-154.eu-north-1.compute.amazonaws.com/ws';
         break;
     default:
-        WS_URL = 'http://localhost:8080';
+        WS_URL = 'ws://localhost:8080';
 }
 
 export const useSocket = () => {

@@ -1,18 +1,18 @@
 import express from "express";
 import routes from "./routers/routes";
 import cors from "cors";
-import { initPassport } from "./passport";
 import auth from "./routers/auth";
 import dotenv from "dotenv";
 import session from "express-session";
 import passport from "passport";
 import { websocketRoute } from "./websockets";
+import { isAuthenticated } from "./constants/middlewares/isAuthenticated";
 
-const logger = require('morgan');
+const logger = require("morgan");
 const app = express();
 dotenv.config();
 
-app.use(logger('dev')); 
+app.use(logger("dev"));
 
 app.use(
     session({
@@ -22,11 +22,6 @@ app.use(
         cookie: { secure: false, maxAge: 360000 },
     })
 );
-
-initPassport();
-
-app.use(passport.initialize());
-app.use(passport.authenticate("session"));
 
 app.use(
     cors({
@@ -40,6 +35,7 @@ app.use(
 );
 
 app.use("/auth", auth);
+
 app.use("/v1", routes);
 app.use("/", websocketRoute);
 

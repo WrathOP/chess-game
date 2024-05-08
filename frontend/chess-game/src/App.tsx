@@ -29,6 +29,7 @@ function AuthApp() {
                 <Route
                     path='/game/:gameId'
                     element={user ? <Game /> : <Login />} />
+                <Route path='*' element={<div>404</div>} /> 
             </Routes>
         </BrowserRouter>
     );
