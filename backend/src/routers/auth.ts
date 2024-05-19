@@ -6,21 +6,25 @@ import { StatusCodes } from "http-status-codes";
 import { Request, Response } from "express";
 import querystring from "querystring";
 import axios from "axios";
-import CustomError, { formatError } from "../constants/error";
-import { format } from "path";
+import CustomError from "../constants/error";
 
 const auth = Router();
 
-let CLIENT_URL;
+let CLIENT_URL_REDIRECT;
+let CLIENT_LOGOUT_REDIRECT;
 
 if (process.env.NODE_ENV === "production") {
     console.log("Using .env file for production");
-    CLIENT_URL = "https://chess-game-omega-topaz.vercel.app/game/random";
+    CLIENT_URL_REDIRECT =
+        "https://chess-game-omega-topaz.vercel.app/game/random";
+    CLIENT_LOGOUT_REDIRECT = "https://chess-game-omega-topaz.vercel.app";
 } else if (process.env.NODE_ENV === "developement") {
-    CLIENT_URL = "http://localhost:5173/game/random";
+    CLIENT_URL_REDIRECT = "http://localhost:5173/game/random";
+    CLIENT_LOGOUT_REDIRECT = "http://localhost:5173";
 } else {
     console.log("Using .env file for testing");
-    CLIENT_URL = "http://localhost:5173/game/random";
+    CLIENT_URL_REDIRECT = "http://localhost:5173/game/random";
+    CLIENT_LOGOUT_REDIRECT = "http://localhost:5173";
 }
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key";
@@ -41,6 +45,80 @@ async function getGitHubUserProfile(accessToken: string) {
         );
     }
 }
+
+// TODO: Get the tokens from the req.
+
+auth.get("/refresh", async (req: Request, res: Response) => {
+    const { accessToken, idToken } = req.cookies;
+
+    // console.log("Access Token: ", accessToken);
+    // console.log("ID Token: ", idToken);
+    if (!idToken || !accessToken) {
+        return res.status(StatusCodes.UNAUTHORIZED).json({
+            success: false,
+            message: "Unauthorized",
+        });
+    }
+
+    try {
+        // const response = await axios.post(
+        //     `https://api.github.com/applications/${process.env.GITHUB_CLIENT_ID}/token`,
+        //     { access_token: accessToken },
+        //     {
+        //         headers: {
+        //             Accept: "application/vnd.github+json",
+        //             Authorization: `Bearer ${accessToken}`,
+        //             "X-GitHub-Api-Version": "2022-11-28",
+        //         },
+        //         validateStatus: (status) => status >= 200 && status <= 500,
+        //     }
+        // );
+        // console.log("Response: ", response);
+
+        // if (response.status === 404) {
+        //     return res.status(StatusCodes.UNAUTHORIZED).json({
+        //         success: false,
+        //         message: "Unauthorized",
+        //     });
+        // }
+
+        const decoded = jwt.verify(idToken, JWT_SECRET) as { userId: string };
+
+        const user = await db.user.findUnique({
+            where: {
+                id: decoded.userId,
+            },
+        });
+
+        if (!user) {
+            return res.status(StatusCodes.UNAUTHORIZED).json({
+                success: false,
+                message: "Unauthorized",
+            });
+        }
+
+        return res.status(StatusCodes.OK).json({
+            success: true,
+            user: {
+                id: user.id,
+                email: user.email,
+                name: user.name,
+            },
+        });
+    } catch (err) {
+        console.log(err);
+        res.status(StatusCodes.UNAUTHORIZED).json({
+            success: false,
+            message: "Unauthorized",
+        });
+    }
+});
+
+auth.get("/logout", (req: Request, res: Response) => {
+    res.clearCookie("idToken");
+    res.clearCookie("accessToken");
+    res.redirect(CLIENT_LOGOUT_REDIRECT);
+});
 
 auth.get("/github", (req: Request, res: Response) => {
     const queryParams = querystring.stringify({
@@ -72,12 +150,11 @@ auth.get("/github/callback", async (req: Request, res: Response) => {
         const accessToken = data.access_token;
         const profile = await getGitHubUserProfile(accessToken);
 
-        if (!profile.data.id) {
-            res.status(StatusCodes.UNAUTHORIZED).json({
+        if (!profile.id) {
+            return res.status(StatusCodes.UNAUTHORIZED).json({
                 success: false,
                 message: "Unauthorized",
             });
-            return;
         }
 
         const user = await db.user.upsert({
@@ -104,11 +181,10 @@ auth.get("/github/callback", async (req: Request, res: Response) => {
         res.cookie("accessToken", accessToken, {
             httpOnly: true,
             secure: true,
-            expires: data.expires_in,
         });
 
         console.log("Access Token: ", accessToken);
-        res.redirect(CLIENT_URL);
+        res.redirect(CLIENT_URL_REDIRECT);
     } catch (err) {
         console.log(err);
         if (err instanceof CustomError) {

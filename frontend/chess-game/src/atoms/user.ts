@@ -1,35 +1,30 @@
-
-import { atom, selector } from "recoil";
-import axiosInstance from "../services/axiosInstance";
+import { atom, selector } from 'recoil';
+import { isLoggedIn, logout } from '../services/api/auth';
 
 export interface User {
-    token: string;
+    email: string;
     id: string;
     name: string;
 }
 
 export const userAtom = atom<User>({
-    key: "user",
+    key: 'user',
     default: selector({
-        key: "user/default",
+        key: 'user/default',
         get: async () => {
             try {
-                const response = await axiosInstance.get("/auth/refresh", {
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                });
-    
-                if (response.status === 200) {
-                    const data = await response.data;
-                    return data;
+                const response = await isLoggedIn();
+
+                if (response.status !== 200) {
+                    await logout();
                 }
-            } catch(e) {
+
+                return response.data.user;
+            } catch (e) {
                 console.error(e);
             }
 
             return null;
-        }
-    
+        },
     }),
 });

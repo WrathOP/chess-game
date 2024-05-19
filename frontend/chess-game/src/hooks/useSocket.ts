@@ -20,7 +20,7 @@ export const useSocket = () => {
     console.log(user);
 
     useEffect(() => {
-        const ws = new WebSocket(`${WS_URL}?token=${user.token}`);
+        const ws = new WebSocket(`${WS_URL}?token=${user.id}`);
 
         ws.onopen = () => {
             setSocket(ws);
