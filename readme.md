@@ -2,7 +2,7 @@
 
 Welcome to our React Chess Application! This project is designed to provide a simple and enjoyable chess experience, implemented using React for the frontend and Node.js for the backend.
 
-Live url: chess-game-omega-topaz.vercel.app
+Live url: chess-game-omega-topaz.vercel.app (backend is not working I am broke could afford the EC2 anymore ;( )
 
 ## Features
 
@@ -59,6 +59,10 @@ To run the application locally, follow these steps:
 3. Open your browser and navigate to `http://localhost:5173` to access the application.
 
 ## Contributing
+
+
+## Screenshots
+<img width="1678" alt="image" src="https://github.com/user-attachments/assets/edd83395-d317-46d0-98bc-a6a1c04ef893">
 
 We welcome contributions from the community! If you find any bugs or have suggestions for improvements, please feel free to open an issue or submit a pull request.
 
